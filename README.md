@@ -39,7 +39,13 @@ I need to process Go Potty Portal Excel data into Firebase. Please act as my aut
 - Guide me through basic validation tests to ensure data integrity
 - Confirm the data appears correctly in the Firebase console
 
-#### Step 6: Production Firebase Import
+#### Step 6: Backup Current Production Data (Optional)
+- Ask if I want to create a backup of current production data
+- If yes, guide me through exporting current production data using FireFoo
+- Suggest naming the backup docuemnts ending with `backup` (e.g., `users-backup.json`)
+- Verify the backup completed successfully
+
+#### Step 7: Production Firebase Import
 - Only proceed after successful dev testing
 - Guide me through importing the generated JSON files to production using FireFoo
 - Provide step-by-step instructions for importing each file:
@@ -49,7 +55,7 @@ I need to process Go Potty Portal Excel data into Firebase. Please act as my aut
   * auth-users.json to Authentication (prod)
 - Ask me to confirm the production import was successful
 
-#### Step 7: Update Excel Status
+#### Step 8: Update Excel Status
 - Remind me to update the status of processed entries in Google Drive
 - Suggest marking them as "Processed" to prevent duplicate processing
 
@@ -104,19 +110,42 @@ The script will:
 
 You'll see progress logs in the console indicating which items were processed.
 
-### Step 4: Import Data to Firebase
+### Step 4: Test in Development Environment
 
-Use FireFoo to import the generated JSON files to Firebase:
+Before deploying to production, test the generated JSON files in a development environment:
 
 1. Open FireFoo
-2. Connect to your Firebase project
+2. Connect to your development Firebase project
+3. Import the following files to the development environment:
+   - `current/organisations.json` to Firestore
+   - `current/users.json` to Firestore
+   - `current/locations.json` to Firestore
+   - `current/auth-users.json` to Authentication
+4. Verify the import was successful in the development environment
+5. Perform basic validation tests to ensure data integrity
+
+### Step 5: Backup Current Production Data (Optional)
+
+For added security, you can create a backup of current production data before importing:
+
+1. Open FireFoo
+2. Connect to your production Firebase project
+3. Export the current data using FireFoo's export feature
+4. Save the backup with today's date (e.g., `backup-YYYY-MM-DD`)
+
+### Step 6: Import Data to Production
+
+Once testing is complete, import the generated JSON files to production:
+
+1. Open FireFoo
+2. Connect to your production Firebase project
 3. Import the following files:
    - `current/organisations.json` to Firestore
    - `current/users.json` to Firestore
    - `current/locations.json` to Firestore
    - `current/auth-users.json` to Authentication
 
-### Step 5: Update Excel Status
+### Step 7: Update Excel Status
 
 After successfully importing the data to Firebase, update the status of the processed entries in the Google Drive Excel file from "Unprocessed" to "Processed" to prevent duplicate processing in the future.
 
