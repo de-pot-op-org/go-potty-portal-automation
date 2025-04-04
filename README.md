@@ -1,110 +1,84 @@
-# Go Potty Portal Data Entry Automation
+# Go Potty Portal Excel Processing
 
-This repository contains scripts for automating data entry in the Go Potty Portal system. It includes both Excel management scripts and Firebase integration scripts.
+This repository contains scripts for processing Excel data into Firebase-compatible JSON files for the Go Potty Portal system. The script takes data from the Excel file (`go-potty-portal.xlsx`) and merges it with the existing data in the `current/*.json` files, generating proper Firebase IDs, password hashes, and timestamps.
 
 ## Project Structure
 
 - `scripts/`: Contains JavaScript scripts for Excel data processing
-- `firebase-scripts/`: Contains TypeScript scripts for Firebase integration
-- `docs/`: Documentation and guides
-- `unprocessed-*.json`: Extracted data from Excel for processing
-- `processed-*.json`: Results of processing with Firebase IDs
+  - `process-excel-to-current.js`: The main script that processes Excel data
+- `current/`: Contains the current state of JSON data files
+  - `organisations.json`: Organisation data
+  - `auth-users.json`: Firebase Authentication user data
+  - `users.json`: Firestore user data
+  - `locations.json`: Location data
+- `go-potty-portal.xlsx`: Excel file containing new data to be processed
 
 ## Prerequisites
 
 - Node.js (v14 or later)
 - npm
-- Firebase CLI (for running emulators)
-- Excel file with organization, user, and location data
+- FireFoo (for importing the generated JSON files to Firebase)
+- Access to the Go Potty Portal Excel file on Google Drive
 
-## Installation
+## Instructions for Processing New Data
 
-1. Clone the repository
-2. Install dependencies:
-   ```bash
-   cd portal-excel
-   npm install
-   ```
+### Step 1: Ensure Current Data is Up-to-Date
 
-**Note:** If you encounter issues with the npm install taking too long or timing out:
+Before processing new data, make sure the `current/*.json` files contain the latest data from the Firebase database. You can export the latest data using FireFoo or other Firebase export tools.
 
-1. Try cleaning the npm cache:
-   ```bash
-   npm cache clean --force
-   ```
+### Step 2: Download the Excel File
 
-2. Try installing just the essential dependencies:
-   ```bash
-   npm install xlsx yargs
-   ```
+Download the latest version of the Excel file from Google Drive and save it as `go-potty-portal.xlsx` in the root directory of this project, overwriting the existing file.
 
-3. For the Firebase scripts, you can either:
-   - Install dependencies as needed
-   - Use the scripts as reference for implementation
+### Step 3: Run the Processing Script
 
-## Quick Start
-
-### Excel Scripts (Ready to Use)
-
-1. **Extract Data from Excel**
-   ```bash
-   node scripts/extract-unprocessed-data.js --type=organizations
-   node scripts/extract-unprocessed-data.js --type=users
-   node scripts/extract-unprocessed-data.js --type=locations
-   ```
-
-2. **Update Excel with Processed Status**
-   ```bash
-   node scripts/update-processed-status.js --type=organizations --processedDataFile=processed-organizations.json
-   ```
-
-3. **Generate Welcome Emails**
-   ```bash
-   node scripts/generate-welcome-emails.js
-   ```
-
-### Firebase Scripts
-
-1. **Import Organizations to Firebase**
-   ```bash
-   npx ts-node firebase-scripts/import_organizations.ts --emulator
-   ```
-
-2. **Import Users to Firebase**
-   ```bash
-   npx ts-node firebase-scripts/import_users.ts --emulator
-   ```
-
-3. **Import Locations to Firebase**
-   ```bash
-   npx ts-node firebase-scripts/import_locations.ts --emulator
-   ```
-
-4. **Validate Import**
-   ```bash
-   npx ts-node firebase-scripts/validate_import.ts --emulator
-   ```
-
-## Complete Documentation
-
-See `go-potty-data-entry-automation.md` for detailed instructions on using these scripts.
-
-## Firebase Emulator
-
-Before running scripts with the emulator flag, make sure the Firebase emulator is running:
+Run the following command to process the Excel data:
 
 ```bash
-firebase emulators:start
+cd scripts
+node process-excel-to-current.js
 ```
 
-## Production Mode
+The script will:
+- Read data from the Excel file
+- Process organizations, users, and locations
+- Generate proper Firebase IDs, password hashes, and salts
+- Merge the new data with existing data in the `current/*.json` files
+- Output the updated data to the `current/*.json` files
 
-For production imports, ensure you have:
-1. Authentication with Firebase (`firebase login`)
-2. A service account JSON file named `service-account.json` in the root directory
+You'll see progress logs in the console indicating which items were processed.
 
-Run the scripts without the `--emulator` flag to use production mode.
+### Step 4: Import Data to Firebase
+
+Use FireFoo to import the generated JSON files to Firebase:
+
+1. Open FireFoo
+2. Connect to your Firebase project
+3. Import the following files:
+   - `current/organisations.json` to Firestore
+   - `current/users.json` to Firestore
+   - `current/locations.json` to Firestore
+   - `current/auth-users.json` to Authentication
+
+### Step 5: Update Excel Status
+
+After successfully importing the data to Firebase, update the status of the processed entries in the Google Drive Excel file from "Unprocessed" to "Processed" to prevent duplicate processing in the future.
 
 ## Troubleshooting
 
-See the "Troubleshooting" section in `go-potty-data-entry-automation.md` for common issues and solutions. 
+If you encounter any issues running the script:
+
+1. Make sure all dependencies are installed:
+   ```bash
+   npm install
+   ```
+
+2. Verify that the Excel file structure matches the expected format
+
+3. Check that the `current/*.json` files are valid JSON and have the correct structure
+
+## Notes
+
+- The script generates secure IDs and password hashes for new users
+- Default password for new users is set in the script (see DEFAULTS.DEFAULT_PASSWORD)
+- The script will not process entries that are already marked as processed in the Excel file
