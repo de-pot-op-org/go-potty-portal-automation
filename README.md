@@ -8,9 +8,9 @@ I need to process Go Potty Portal Excel data into Firebase. Please act as my aut
 
 ### Workflow Checkpoints:
 
-#### Step 1: Verify Current JSON Data
+#### Step 1: Verify Input JSON Data
 - Ask me if I've exported the latest data from Firebase using FireFoo
-- Confirm that I've checked the current/*.json files contain up-to-date data
+- Confirm that I've checked the inputs/*.json files contain up-to-date data
 - If needed, remind me how to export data from Firebase using FireFoo
 
 #### Step 2: Excel File Preparation
@@ -19,22 +19,23 @@ I need to process Go Potty Portal Excel data into Firebase. Please act as my aut
 - Ask if the Excel file contains new organizations, users, or locations that need processing
 
 #### Step 3: Run Processing Script
-- Guide me through running the process-excel-to-current.js script
-- Provide the exact command: cd scripts && node process-excel-to-current.js
+- Guide me through running the process-excel-to-inputs.js script
+- Provide the exact command: cd scripts && node process-excel-to-inputs.js
 - Ask me to share the terminal output to verify processing was successful
 
 #### Step 4: Review Output Results
 - Help me interpret the processing results
 - Verify which items were processed (organizations, users, locations)
+- Examine the outputs folder for new entities only
 - Check for any errors or warnings in the output
 
 #### Step 5: Test in Development Environment
 - Guide me through importing the generated JSON files to the development Firebase project first
 - Provide step-by-step instructions for importing each file to the dev environment using FireFoo:
-  * organisations.json to Firestore (dev)
-  * users.json to Firestore (dev)
-  * locations.json to Firestore (dev)
-  * auth-users.json to Authentication (dev)
+  * outputs/organisations.json to Firestore (dev) - only new organizations
+  * outputs/users.json to Firestore (dev) - only new users
+  * outputs/locations.json to Firestore (dev) - only new locations
+  * outputs/auth-users.json to Authentication (dev) - only new auth users
 - Help me verify the import was successful in the dev environment
 - Guide me through basic validation tests to ensure data integrity
 - Confirm the data appears correctly in the Firebase console
@@ -49,14 +50,14 @@ I need to process Go Potty Portal Excel data into Firebase. Please act as my aut
 - Only proceed after successful dev testing
 - Guide me through importing the generated JSON files to production using FireFoo
 - Provide step-by-step instructions for importing each file:
-  * organisations.json to Firestore (prod)
-  * users.json to Firestore (prod)
-  * locations.json to Firestore (prod)
-  * auth-users.json to Authentication (prod)
+  * outputs/organisations.json to Firestore (prod) - only new organizations
+  * outputs/users.json to Firestore (prod) - only new users
+  * outputs/locations.json to Firestore (prod) - only new locations
+  * outputs/auth-users.json to Authentication (prod) - only new auth users
 - Ask me to confirm the production import was successful
 
 #### Step 8: Send Welcome Emails
-- Help me locate the generated welcome emails in the welcome-emails.txt file
+- Help me locate the generated welcome emails in the outputs/welcome-emails.txt file
 - Guide me through sending these emails to the new users
 - Explain the importance of providing users with their login credentials
 
@@ -67,17 +68,20 @@ I need to process Go Potty Portal Excel data into Firebase. Please act as my aut
 At each step, wait for my confirmation before proceeding. If I encounter any issues, provide troubleshooting guidance based on the repository documentation. If needed, refer to specific sections of the script or JSON structure to help diagnose problems.
 ```
 
-This repository contains scripts for processing Excel data into Firebase-compatible JSON files for the Go Potty Portal system. The script takes data from the Excel file (`go-potty-portal.xlsx`) and merges it with the existing data in the `current/*.json` files, generating proper Firebase IDs, password hashes, and timestamps.
+This repository contains scripts for processing Excel data into Firebase-compatible JSON files for the Go Potty Portal system. The script takes data from the Excel file (`go-potty-portal.xlsx`) and merges it with the existing data in the `inputs/*.json` files, generating proper Firebase IDs, password hashes, and timestamps.
 
 ## Project Structure
 
 - `scripts/`: Contains JavaScript scripts for Excel data processing
-  - `process-excel-to-current.js`: The main script that processes Excel data
-- `current/`: Contains the current state of JSON data files
+  - `process-excel-to-inputs.js`: The main script that processes Excel data
+- `inputs/`: Contains the input JSON data files for git diff tracking
   - `organisations.json`: Organisation data
   - `auth-users.json`: Firebase Authentication user data
   - `users.json`: Firestore user data
   - `locations.json`: Location data
+- `outputs/`: Contains generated output files from the latest processing
+  - JSON files containing ONLY NEW entities from the latest processing
+  - `welcome-emails.txt`: Welcome emails for new users
 - `go-potty-portal.xlsx`: Excel file containing new data to be processed
 
 ## Prerequisites
@@ -89,9 +93,9 @@ This repository contains scripts for processing Excel data into Firebase-compati
 
 ## Instructions for Processing New Data
 
-### Step 1: Ensure Current Data is Up-to-Date
+### Step 1: Ensure Input Data is Up-to-Date
 
-Before processing new data, make sure the `current/*.json` files contain the latest data from the Firebase database. You can export the latest data using FireFoo or other Firebase export tools.
+Before processing new data, make sure the `inputs/*.json` files contain the latest data from the Firebase database. You can export the latest data using FireFoo or other Firebase export tools.
 
 ### Step 2: Download the Excel File
 
@@ -103,17 +107,19 @@ Run the following command to process the Excel data:
 
 ```bash
 cd scripts
-node process-excel-to-current.js
+node process-excel-to-inputs.js
 ```
 
 The script will:
 - Read data from the Excel file
 - Process organizations, users, and locations
 - Generate proper Firebase IDs, password hashes, and salts
-- Merge the new data with existing data in the `current/*.json` files
-- Output the updated data to the `current/*.json` files
+- Merge the new data with existing data in the `inputs/*.json` files
+- Output the data as follows:
+  * Complete updated data to `inputs/*.json` files (for git diff tracking)
+  * Only new/modified entities to `outputs/*.json` files (for easier review and selective imports)
 - Generate welcome emails for new users in both English and Dutch
-- Save welcome emails to `welcome-emails.txt` file
+- Save welcome emails to `outputs/welcome-emails.txt` file
 
 You'll see progress logs in the console indicating which items were processed. The script will also generate welcome emails for all new users in both English and Dutch.
 
@@ -123,11 +129,12 @@ Before deploying to production, test the generated JSON files in a development e
 
 1. Open FireFoo
 2. Connect to your development Firebase project
-3. Import the following files to the development environment:
-   - `current/organisations.json` to Firestore
-   - `current/users.json` to Firestore
-   - `current/locations.json` to Firestore
-   - `current/auth-users.json` to Authentication
+3. Import the following files to the development environment (use outputs folder to import only new entities):
+   - `outputs/organisations.json` to Firestore (only new organisations, if any)
+   - `outputs/users.json` to Firestore (only new users)
+   - `outputs/locations.json` to Firestore (only new locations, if any)
+   - `outputs/auth-users.json` to Authentication (only new auth users)
+   - Or use `inputs/*.json` files to import complete datasets
 4. Verify the import was successful in the development environment
 5. Perform basic validation tests to ensure data integrity
 
@@ -146,11 +153,12 @@ Once testing is complete, import the generated JSON files to production:
 
 1. Open FireFoo
 2. Connect to your production Firebase project
-3. Import the following files:
-   - `current/organisations.json` to Firestore
-   - `current/users.json` to Firestore
-   - `current/locations.json` to Firestore
-   - `current/auth-users.json` to Authentication
+3. Import the following files (use outputs folder to import only new entities):
+   - `outputs/organisations.json` to Firestore (only new organisations, if any)
+   - `outputs/users.json` to Firestore (only new users)
+   - `outputs/locations.json` to Firestore (only new locations, if any)
+   - `outputs/auth-users.json` to Authentication (only new auth users)
+   - Or use `inputs/*.json` files to import complete datasets
 
 ### Step 7: Update Excel Status
 
@@ -158,7 +166,7 @@ After successfully importing the data to Firebase, update the status of the proc
 
 ### Step 8: Send Welcome Emails
 
-For each new user added, the script generates welcome emails in both English and Dutch. These emails are saved to the `welcome-emails.txt` file in the root directory. Send these emails to the new users to provide them with login credentials.
+For each new user added, the script generates welcome emails in both English and Dutch. These emails are saved to the `outputs/welcome-emails.txt` file. Send these emails to the new users to provide them with login credentials.
 
 ## Troubleshooting
 
@@ -171,7 +179,7 @@ If you encounter any issues running the script:
 
 2. Verify that the Excel file structure matches the expected format
 
-3. Check that the `current/*.json` files are valid JSON and have the correct structure
+3. Check that the `inputs/*.json` files are valid JSON and have the correct structure
 
 ## Notes
 

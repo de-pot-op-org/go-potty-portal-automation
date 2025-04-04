@@ -1,0 +1,59 @@
+{
+  "meta": {
+    "format": "JSON",
+    "version": "1.1.0",
+    "projectId": "go-potty-portal",
+    "resourcePath": [
+      "locations"
+    ],
+    "recursive": false,
+    "creationTime": 1743779534,
+    "app": "firefoo"
+  },
+  "data": {
+    "QaqpWexXmlkZVwc2pQAT": {
+      "name": "Vrouwenbuurtlab",
+      "location_type": "location",
+      "organisation_id": "HDBkVsEX7cuazk28MNoT",
+      "address_line1": "",
+      "address_line2": "",
+      "address_city": "",
+      "address_region": "",
+      "address_postal_code": "",
+      "address_country": "",
+      "created_at": {
+        "__time__": "2025-04-04T15:12:14.387Z"
+      },
+      "created_by": "system",
+      "updated_at": {
+        "__time__": "2025-04-04T15:12:14.387Z"
+      },
+      "updated_by": "system",
+      "__collections__": {
+        "insights": {}
+      }
+    },
+    "utvEcuqG6oGclA0JdDil": {
+      "name": "CJG",
+      "location_type": "location",
+      "organisation_id": "HDBkVsEX7cuazk28MNoT",
+      "address_line1": "",
+      "address_line2": "",
+      "address_city": "",
+      "address_region": "",
+      "address_postal_code": "",
+      "address_country": "",
+      "created_at": {
+        "__time__": "2025-04-04T15:12:14.387Z"
+      },
+      "created_by": "system",
+      "updated_at": {
+        "__time__": "2025-04-04T15:12:14.387Z"
+      },
+      "updated_by": "system",
+      "__collections__": {
+        "insights": {}
+      }
+    }
+  }
+}

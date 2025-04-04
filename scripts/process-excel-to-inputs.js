@@ -24,10 +24,19 @@ const argv = yargs(hideBin(process.argv))
 
 // Define constants for file paths
 const FILE_PATHS = {
-  ORGANISATIONS: path.join(__dirname, '..', 'current', 'organisations.json'),
-  AUTH_USERS: path.join(__dirname, '..', 'current', 'auth-users.json'),
-  USERS: path.join(__dirname, '..', 'current', 'users.json'),
-  LOCATIONS: path.join(__dirname, '..', 'current', 'locations.json')
+  ORGANISATIONS: path.join(__dirname, '..', 'inputs', 'organisations.json'),
+  AUTH_USERS: path.join(__dirname, '..', 'inputs', 'auth-users.json'),
+  USERS: path.join(__dirname, '..', 'inputs', 'users.json'),
+  LOCATIONS: path.join(__dirname, '..', 'inputs', 'locations.json')
+};
+
+// Define constants for output file paths
+const OUTPUT_PATHS = {
+  ORGANISATIONS: path.join(__dirname, '..', 'outputs', 'organisations.json'),
+  AUTH_USERS: path.join(__dirname, '..', 'outputs', 'auth-users.json'),
+  USERS: path.join(__dirname, '..', 'outputs', 'users.json'),
+  LOCATIONS: path.join(__dirname, '..', 'outputs', 'locations.json'),
+  WELCOME_EMAILS: path.join(__dirname, '..', 'outputs', 'welcome-emails.txt')
 };
 
 // Define sheet names
@@ -77,6 +86,13 @@ const DEFAULTS = {
   TIMEZONE: 'Europe/Amsterdam',
   // Default password for new users
   DEFAULT_PASSWORD: 'WelkomBijGoPotty2025!',
+  // Track new/modified entities
+  NEW_ENTITIES: {
+    ORGANISATIONS: {},
+    AUTH_USERS: {},
+    USERS: {},
+    LOCATIONS: {}
+  },
   // Portal URL
   PORTAL_URL: 'https://go-potty-portal.web.app/',
   // Email templates
@@ -109,7 +125,7 @@ Wachtwoord: {{PASSWORD}}
 Als je vragen hebt of hulp nodig hebt, neem dan contact met ons op via hallo@depotop.nu of door deze e-mail te beantwoorden.
 
 Vriendelijke groeten,
-Het De Pot Op Team`
+De Pot Op Team`
     }
   }
 };
@@ -158,8 +174,9 @@ function readFromCurrentFile(filePath) {
  * Helper function to write data to a JSON file
  * @param {string} filePath - Path to the JSON file
  * @param {Object} data - Data to write
+ * @param {boolean} [isOutputFile=false] - Whether this is an output file
  */
-function saveToCurrentFile(filePath, data) {
+function saveToFile(filePath, data, isOutputFile = false, onlyNewEntities = false) {
   console.log(`Writing JSON file: ${filePath}`);
 
   // Create directories if they don't exist
@@ -173,6 +190,12 @@ function saveToCurrentFile(filePath, data) {
   let resourcePath = [fileName];
   if (fileName === 'auth-users') {
     resourcePath = ['auth-users'];
+  }
+  
+  // If this is empty data and we're only showing new entities, skip it
+  if (onlyNewEntities && Object.keys(data).length === 0) {
+    console.log(`No new ${fileName} to write, skipping output file.`);
+    return;
   }
 
   // Create FireFoo-compatible JSON structure
@@ -190,8 +213,15 @@ function saveToCurrentFile(filePath, data) {
   };
 
   try {
-    fs.writeFileSync(filePath, JSON.stringify(firefooData, null, 2), 'utf8');
+    // Convert data to FireFoo-compatible JSON format
+    const content = JSON.stringify(firefooData, null, 2);
+    
+    // Always write to the specified file path (current directory)
+    fs.writeFileSync(filePath, content, 'utf8');
     console.log(`Successfully wrote ${filePath}`);
+    
+    // If this is already an output file, we're done
+    if (isOutputFile) return;
   } catch (err) {
     console.error(`Error writing ${filePath}:`, err);
   }
@@ -568,6 +598,9 @@ function main() {
         // Add new organization to currentOrgData
         currentOrgData[determinedId] = newOrgEntry;
         
+        // Track this as a new entity for output
+        DEFAULTS.NEW_ENTITIES.ORGANISATIONS[determinedId] = newOrgEntry;
+        
         // Store the ID for future reference
         processedOrgIds[org.name] = determinedId;
         
@@ -591,7 +624,8 @@ function main() {
     // Milestone 3: Process Auth Users
     console.log('\nProcessing Auth Users...');
     
-    // Create list to store newly added auth users info for Milestone 4
+    // Store added auth user IDs for tracking
+    const newlyAddedAuthUsers = [];
     const newlyAddedAuthUsersInfo = [];
     
     // Iterate through unprocessed users
@@ -624,7 +658,7 @@ function main() {
           const passwordHash = generatePasswordHash(DEFAULTS.DEFAULT_PASSWORD, salt);
           
           // Create new auth user entry with real values
-          const newUserAuthEntry = {
+          const newAuthEntry = {
             localId: authId,
             email: user.email,
             emailVerified: true,
@@ -641,7 +675,10 @@ function main() {
           if (!currentAuthData) {
             currentAuthData = {};
           }
-          currentAuthData[authId] = newUserAuthEntry;
+          currentAuthData[authId] = newAuthEntry;
+          
+          // Track this as a new entity for output
+          DEFAULTS.NEW_ENTITIES.AUTH_USERS[authId] = newAuthEntry;
           
           // Store info for Milestone 4
           newlyAddedAuthUsersInfo.push({
@@ -649,7 +686,10 @@ function main() {
             email: user.email,
             organizationId
           });
-          
+          // Add to the tracking array
+          if (newlyAddedAuthUsers) {
+            newlyAddedAuthUsers.push(authId);
+          }
           console.log(`Added new auth user: ${user.email} with ID ${authId}`);
         } else {
           console.log(`Auth user ${user.email} already exists with ID ${existingUser.localId}`);
@@ -699,6 +739,9 @@ function main() {
         
         // Add user document to currentUserData
         currentUserData[authId] = newUserDoc;
+        
+        // Track this as a new entity for output
+        DEFAULTS.NEW_ENTITIES.USERS[authId] = newUserDoc;
         
         console.log(`Added new Firestore user document for ${email} with ID ${authId}`);
       } else {
@@ -801,6 +844,9 @@ function main() {
         // Add new location to currentLocationData
         currentLocationData[locationId] = newLocationEntry;
         
+        // Track this as a new entity for output
+        DEFAULTS.NEW_ENTITIES.LOCATIONS[locationId] = newLocationEntry;
+        
         console.log(`Added new location: ${loc.name} with ID ${locationId}`);
       } else {
         console.log(`Location ${loc.name} already exists with ID ${existingLocId}`);
@@ -809,11 +855,35 @@ function main() {
     
     console.log(`Processing complete. Writing updated data to files...`);
     
-    // Write all updated data to files
-    saveToCurrentFile(FILE_PATHS.ORGANISATIONS, currentOrgData);
-    saveToCurrentFile(FILE_PATHS.AUTH_USERS, currentAuthData);
-    saveToCurrentFile(FILE_PATHS.USERS, currentUserData);
-    saveToCurrentFile(FILE_PATHS.LOCATIONS, currentLocationData);
+    // Write all updated data to input files for git diff tracking
+    saveToFile(FILE_PATHS.ORGANISATIONS, currentOrgData, false, false);
+    saveToFile(FILE_PATHS.AUTH_USERS, currentAuthData, false, false);
+    saveToFile(FILE_PATHS.USERS, currentUserData, false, false);
+    saveToFile(FILE_PATHS.LOCATIONS, currentLocationData, false, false);
+    
+    // Write only new/modified entities to output files
+    console.log('\nWriting new/modified data to output files...');
+    
+    // Check if we have any new entities to output
+    if (Object.keys(DEFAULTS.NEW_ENTITIES.ORGANISATIONS).length > 0) {
+      saveToFile(OUTPUT_PATHS.ORGANISATIONS, DEFAULTS.NEW_ENTITIES.ORGANISATIONS, true, true);
+      console.log(`Wrote ${Object.keys(DEFAULTS.NEW_ENTITIES.ORGANISATIONS).length} new organizations to output`);
+    }
+    
+    if (Object.keys(DEFAULTS.NEW_ENTITIES.AUTH_USERS).length > 0) {
+      saveToFile(OUTPUT_PATHS.AUTH_USERS, DEFAULTS.NEW_ENTITIES.AUTH_USERS, true, true);
+      console.log(`Wrote ${Object.keys(DEFAULTS.NEW_ENTITIES.AUTH_USERS).length} new auth users to output`);
+    }
+    
+    if (Object.keys(DEFAULTS.NEW_ENTITIES.USERS).length > 0) {
+      saveToFile(OUTPUT_PATHS.USERS, DEFAULTS.NEW_ENTITIES.USERS, true, true);
+      console.log(`Wrote ${Object.keys(DEFAULTS.NEW_ENTITIES.USERS).length} new Firestore users to output`);
+    }
+    
+    if (Object.keys(DEFAULTS.NEW_ENTITIES.LOCATIONS).length > 0) {
+      saveToFile(OUTPUT_PATHS.LOCATIONS, DEFAULTS.NEW_ENTITIES.LOCATIONS, true, true);
+      console.log(`Wrote ${Object.keys(DEFAULTS.NEW_ENTITIES.LOCATIONS).length} new locations to output`);
+    }
     
     // Generate welcome emails for new users
     if (newlyAddedAuthUsersInfo.length > 0) {
@@ -832,8 +902,8 @@ function main() {
         });
       }
       
-      // Save welcome emails to a file
-      const welcomeEmailsPath = path.join(__dirname, '..', 'welcome-emails.txt');
+      // Save welcome emails to the outputs folder
+      const welcomeEmailsPath = OUTPUT_PATHS.WELCOME_EMAILS;
       let welcomeEmailsContent = `Welcome Emails Generated on ${new Date().toISOString()}\n\n`;
       
       welcomeEmails.forEach((item, index) => {
@@ -855,7 +925,7 @@ function main() {
     console.log(`Organizations processed: ${unprocessedOrgs.length}`);
     console.log(`Auth users processed: ${unprocessedUsers.length}`);
     console.log(`Locations processed: ${unprocessedLocations.length}`);
-    console.log('All data has been successfully merged into the current/*.json files.');
+    console.log('All data has been successfully merged into the inputs/*.json files.');
     console.log('===========================')
     
   } catch (error) {
