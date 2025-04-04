@@ -7,7 +7,7 @@
       "locations"
     ],
     "recursive": false,
-    "creationTime": 1743777244,
+    "creationTime": 1743778474,
     "app": "firefoo"
   },
   "data": {
@@ -137,6 +137,50 @@
       "created_by": "system",
       "updated_at": {
         "__time__": "2025-04-04T14:34:04.784Z"
+      },
+      "updated_by": "system",
+      "__collections__": {
+        "insights": {}
+      }
+    },
+    "Ry8OLoN3udQ8yTwOmNh9": {
+      "name": "Vrouwenbuurtlab",
+      "location_type": "location",
+      "organisation_id": "HDBkVsEX7cuazk28MNoT",
+      "address_line1": "",
+      "address_line2": "",
+      "address_city": "",
+      "address_region": "",
+      "address_postal_code": "",
+      "address_country": "",
+      "created_at": {
+        "__time__": "2025-04-04T14:54:34.187Z"
+      },
+      "created_by": "system",
+      "updated_at": {
+        "__time__": "2025-04-04T14:54:34.187Z"
+      },
+      "updated_by": "system",
+      "__collections__": {
+        "insights": {}
+      }
+    },
+    "gYvxfN83yk9uiOMQe5A1": {
+      "name": "CJG",
+      "location_type": "location",
+      "organisation_id": "HDBkVsEX7cuazk28MNoT",
+      "address_line1": "",
+      "address_line2": "",
+      "address_city": "",
+      "address_region": "",
+      "address_postal_code": "",
+      "address_country": "",
+      "created_at": {
+        "__time__": "2025-04-04T14:54:34.187Z"
+      },
+      "created_by": "system",
+      "updated_at": {
+        "__time__": "2025-04-04T14:54:34.187Z"
       },
       "updated_by": "system",
       "__collections__": {

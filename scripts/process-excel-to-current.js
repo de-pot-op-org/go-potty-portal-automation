@@ -76,7 +76,42 @@ const DEFAULTS = {
   TIMESTAMP: { __time__: new Date().toISOString() },
   TIMEZONE: 'Europe/Amsterdam',
   // Default password for new users
-  DEFAULT_PASSWORD: 'WelkomBijGoPotty2025!'
+  DEFAULT_PASSWORD: 'WelkomBijGoPotty2025!',
+  // Portal URL
+  PORTAL_URL: 'https://go-potty-portal.web.app/',
+  // Email templates
+  EMAIL_TEMPLATES: {
+    ENGLISH: {
+      SUBJECT: '🚽 Go Potty Portal Login Details',
+      BODY: `Hello,
+
+You have been granted access to the Go Potty portal. Please use the information below to log in.
+
+Website: https://go-potty-portal.web.app/
+Email: {{EMAIL}}
+Password: {{PASSWORD}}
+
+If you have any questions or need assistance, do not hesitate to contact us at hello@gopottynow.com or by replying to this email. We're here to help!
+
+Kind regards,
+The Go Potty Team`
+    },
+    DUTCH: {
+      SUBJECT: '🚽 Go Potty Portal Inloggegevens',
+      BODY: `Hallo,
+
+Je hebt toegang gekregen tot het De Pot Op portaal. Gebruik de onderstaande informatie om in te loggen.
+
+Website: https://go-potty-portal.web.app/
+E-mail: {{EMAIL}}
+Wachtwoord: {{PASSWORD}}
+
+Als je vragen hebt of hulp nodig hebt, neem dan contact met ons op via hallo@depotop.nu of door deze e-mail te beantwoorden.
+
+Vriendelijke groeten,
+Het De Pot Op Team`
+    }
+  }
 };
 
 // Helper function for ID generation
@@ -337,8 +372,32 @@ function generatePasswordHash(password, salt) {
  * @returns {string} Base64-encoded salt
  */
 function generateSalt() {
-  // Generate 12 random bytes and convert to base64
-  return crypto.randomBytes(12).toString('base64');
+  const SALT_LENGTH = 16; // 16 bytes = 128 bits
+  return crypto.randomBytes(SALT_LENGTH).toString('base64');
+}
+
+/**
+ * Generate welcome email content for a new user
+ * @param {string} email - User's email address
+ * @param {string} password - User's initial password
+ * @param {string} language - Language for the email (english or dutch)
+ * @returns {Object} Email content with subject and body
+ */
+function generateWelcomeEmail(email, password, language = 'english') {
+  const template = language.toLowerCase() === 'dutch' ? 
+    DEFAULTS.EMAIL_TEMPLATES.DUTCH : 
+    DEFAULTS.EMAIL_TEMPLATES.ENGLISH;
+  
+  // Replace placeholders in the template
+  const body = template.BODY
+    .replace('{{EMAIL}}', email)
+    .replace('{{PASSWORD}}', password);
+  
+  return {
+    to: email,
+    subject: template.SUBJECT,
+    body: body
+  };
 }
 
 // Main function
@@ -755,6 +814,42 @@ function main() {
     saveToCurrentFile(FILE_PATHS.AUTH_USERS, currentAuthData);
     saveToCurrentFile(FILE_PATHS.USERS, currentUserData);
     saveToCurrentFile(FILE_PATHS.LOCATIONS, currentLocationData);
+    
+    // Generate welcome emails for new users
+    if (newlyAddedAuthUsersInfo.length > 0) {
+      console.log('\nGenerating welcome emails for new users...');
+      const welcomeEmails = [];
+      
+      for (const userInfo of newlyAddedAuthUsersInfo) {
+        // Generate welcome email (in both English and Dutch)
+        const englishEmail = generateWelcomeEmail(userInfo.email, DEFAULTS.DEFAULT_PASSWORD, 'english');
+        const dutchEmail = generateWelcomeEmail(userInfo.email, DEFAULTS.DEFAULT_PASSWORD, 'dutch');
+        
+        welcomeEmails.push({
+          user: userInfo.email,
+          english: englishEmail,
+          dutch: dutchEmail
+        });
+      }
+      
+      // Save welcome emails to a file
+      const welcomeEmailsPath = path.join(__dirname, '..', 'welcome-emails.txt');
+      let welcomeEmailsContent = `Welcome Emails Generated on ${new Date().toISOString()}\n\n`;
+      
+      welcomeEmails.forEach((item, index) => {
+        welcomeEmailsContent += `=== USER ${index + 1}: ${item.user} ===\n\n`;
+        welcomeEmailsContent += `ENGLISH EMAIL:\n`;
+        welcomeEmailsContent += `Subject: ${item.english.subject}\n`;
+        welcomeEmailsContent += `Body:\n${item.english.body}\n\n`;
+        welcomeEmailsContent += `DUTCH EMAIL:\n`;
+        welcomeEmailsContent += `Subject: ${item.dutch.subject}\n`;
+        welcomeEmailsContent += `Body:\n${item.dutch.body}\n\n`;
+        welcomeEmailsContent += `=== END USER ${index + 1} ===\n\n`;
+      });
+      
+      fs.writeFileSync(welcomeEmailsPath, welcomeEmailsContent, 'utf8');
+      console.log(`Generated ${welcomeEmails.length} welcome emails, saved to: ${welcomeEmailsPath}`);
+    }
     
     console.log('\n=== PROCESSING COMPLETE ===');
     console.log(`Organizations processed: ${unprocessedOrgs.length}`);

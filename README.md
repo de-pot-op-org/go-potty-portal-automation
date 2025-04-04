@@ -55,7 +55,12 @@ I need to process Go Potty Portal Excel data into Firebase. Please act as my aut
   * auth-users.json to Authentication (prod)
 - Ask me to confirm the production import was successful
 
-#### Step 8: Update Excel Status
+#### Step 8: Send Welcome Emails
+- Help me locate the generated welcome emails in the welcome-emails.txt file
+- Guide me through sending these emails to the new users
+- Explain the importance of providing users with their login credentials
+
+#### Step 9: Update Excel Status
 - Remind me to update the status of processed entries in Google Drive
 - Suggest marking them as "Processed" to prevent duplicate processing
 
@@ -107,8 +112,10 @@ The script will:
 - Generate proper Firebase IDs, password hashes, and salts
 - Merge the new data with existing data in the `current/*.json` files
 - Output the updated data to the `current/*.json` files
+- Generate welcome emails for new users in both English and Dutch
+- Save welcome emails to `welcome-emails.txt` file
 
-You'll see progress logs in the console indicating which items were processed.
+You'll see progress logs in the console indicating which items were processed. The script will also generate welcome emails for all new users in both English and Dutch.
 
 ### Step 4: Test in Development Environment
 
@@ -148,6 +155,10 @@ Once testing is complete, import the generated JSON files to production:
 ### Step 7: Update Excel Status
 
 After successfully importing the data to Firebase, update the status of the processed entries in the Google Drive Excel file from "Unprocessed" to "Processed" to prevent duplicate processing in the future.
+
+### Step 8: Send Welcome Emails
+
+For each new user added, the script generates welcome emails in both English and Dutch. These emails are saved to the `welcome-emails.txt` file in the root directory. Send these emails to the new users to provide them with login credentials.
 
 ## Troubleshooting
 
