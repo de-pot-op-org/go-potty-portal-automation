@@ -1,0 +1,66 @@
+=== Data Entry Automation Workflow Test ===
+[2025-03-23T16:52:31.939Z] Starting workflow test...
+[2025-03-23T16:52:32.021Z] Step 1: Preparing test data...
+[2025-03-23T16:52:32.021Z] Running: node "/Users/codaveto/Documents/repos/clients/elianne/go-potty/portal/portal-excel/scripts/prepare-test-data.js" 
+[2025-03-23T16:52:34.050Z] Output: Reading Excel file: /Users/codaveto/Documents/repos/clients/elianne/go-potty/portal/portal-excel/go-potty-data-entry-test.xlsx
+Clearing processed flags in Organizations sheet...
+Cleared processed flags for 12 organizations
+Clearing processed flags in Users sheet...
+Cleared processed flags for 20 users
+Clearing processed flags in Locations sheet...
+Cleared processed flags for 47 locations
+Writing updated Excel file to: /Users/codaveto/Documents/repos/clients/elianne/go-potty/portal/portal-excel/go-potty-data-entry-test.xlsx
+
+Test data prepared successfully!
+All processed flags have been set to "No" and IDs have been cleared.
+
+[2025-03-23T16:52:34.051Z] Step 2: Extracting unprocessed organizations...
+[2025-03-23T16:52:34.051Z] Running: node "/Users/codaveto/Documents/repos/clients/elianne/go-potty/portal/portal-excel/scripts/extract-unprocessed-data.js" --type=organizations --excelFile=/Users/codaveto/Documents/repos/clients/elianne/go-potty/portal/portal-excel/go-potty-data-entry-test.xlsx --outputFile=/Users/codaveto/Documents/repos/clients/elianne/go-potty/portal/portal-excel/unprocessed-organizations.json
+[2025-03-23T16:52:36.224Z] Output: Reading Excel file: /Users/codaveto/Documents/repos/clients/elianne/go-potty/portal/portal-excel/go-potty-data-entry-test.xlsx
+Extracted 12 unprocessed organizations
+Output written to: /Users/codaveto/Documents/repos/clients/elianne/go-potty/portal/portal-excel/unprocessed-organizations.json
+
+[2025-03-23T16:52:36.227Z] Step 3: Extracting unprocessed users...
+[2025-03-23T16:52:36.228Z] Running: node "/Users/codaveto/Documents/repos/clients/elianne/go-potty/portal/portal-excel/scripts/extract-unprocessed-data.js" --type=users --excelFile=/Users/codaveto/Documents/repos/clients/elianne/go-potty/portal/portal-excel/go-potty-data-entry-test.xlsx --outputFile=/Users/codaveto/Documents/repos/clients/elianne/go-potty/portal/portal-excel/unprocessed-users.json
+[2025-03-23T16:52:37.894Z] Output: Reading Excel file: /Users/codaveto/Documents/repos/clients/elianne/go-potty/portal/portal-excel/go-potty-data-entry-test.xlsx
+Extracted 20 unprocessed users
+Output written to: /Users/codaveto/Documents/repos/clients/elianne/go-potty/portal/portal-excel/unprocessed-users.json
+
+[2025-03-23T16:52:37.895Z] Step 4: Extracting unprocessed locations...
+[2025-03-23T16:52:37.897Z] Running: node "/Users/codaveto/Documents/repos/clients/elianne/go-potty/portal/portal-excel/scripts/extract-unprocessed-data.js" --type=locations --excelFile=/Users/codaveto/Documents/repos/clients/elianne/go-potty/portal/portal-excel/go-potty-data-entry-test.xlsx --outputFile=/Users/codaveto/Documents/repos/clients/elianne/go-potty/portal/portal-excel/unprocessed-locations.json
+[2025-03-23T16:52:40.129Z] Output: Reading Excel file: /Users/codaveto/Documents/repos/clients/elianne/go-potty/portal/portal-excel/go-potty-data-entry-test.xlsx
+Extracted 47 unprocessed locations
+Output written to: /Users/codaveto/Documents/repos/clients/elianne/go-potty/portal/portal-excel/unprocessed-locations.json
+
+[2025-03-23T16:52:40.129Z] Step 5: Updating processed status in Excel...
+[2025-03-23T16:52:40.130Z] Running: node "/Users/codaveto/Documents/repos/clients/elianne/go-potty/portal/portal-excel/scripts/update-processed-status.js" --excelFile=/Users/codaveto/Documents/repos/clients/elianne/go-potty/portal/portal-excel/go-potty-data-entry-test.xlsx --processedDataFile=/Users/codaveto/Documents/repos/clients/elianne/go-potty/portal/portal-excel/processed-organizations.json --type=organizations
+[2025-03-23T16:52:41.804Z] Output: Reading Excel file: /Users/codaveto/Documents/repos/clients/elianne/go-potty/portal/portal-excel/go-potty-data-entry-test.xlsx
+Reading processed data from: /Users/codaveto/Documents/repos/clients/elianne/go-potty/portal/portal-excel/processed-organizations.json
+Updating organizations processed status...
+Updated status for 2 organizations
+Writing updated Excel file: /Users/codaveto/Documents/repos/clients/elianne/go-potty/portal/portal-excel/go-potty-data-entry-test.xlsx
+Update completed successfully
+
+[2025-03-23T16:52:41.804Z] Running: node "/Users/codaveto/Documents/repos/clients/elianne/go-potty/portal/portal-excel/scripts/update-processed-status.js" --excelFile=/Users/codaveto/Documents/repos/clients/elianne/go-potty/portal/portal-excel/go-potty-data-entry-test.xlsx --processedDataFile=/Users/codaveto/Documents/repos/clients/elianne/go-potty/portal/portal-excel/processed-users.json --type=users
+[2025-03-23T16:52:44.064Z] Output: Reading Excel file: /Users/codaveto/Documents/repos/clients/elianne/go-potty/portal/portal-excel/go-potty-data-entry-test.xlsx
+Reading processed data from: /Users/codaveto/Documents/repos/clients/elianne/go-potty/portal/portal-excel/processed-users.json
+Updating users processed status...
+Updated status for 2 users
+Writing updated Excel file: /Users/codaveto/Documents/repos/clients/elianne/go-potty/portal/portal-excel/go-potty-data-entry-test.xlsx
+Update completed successfully
+
+[2025-03-23T16:52:44.065Z] Running: node "/Users/codaveto/Documents/repos/clients/elianne/go-potty/portal/portal-excel/scripts/update-processed-status.js" --excelFile=/Users/codaveto/Documents/repos/clients/elianne/go-potty/portal/portal-excel/go-potty-data-entry-test.xlsx --processedDataFile=/Users/codaveto/Documents/repos/clients/elianne/go-potty/portal/portal-excel/processed-locations.json --type=locations
+[2025-03-23T16:52:46.803Z] Output: Reading Excel file: /Users/codaveto/Documents/repos/clients/elianne/go-potty/portal/portal-excel/go-potty-data-entry-test.xlsx
+Reading processed data from: /Users/codaveto/Documents/repos/clients/elianne/go-potty/portal/portal-excel/processed-locations.json
+Updating locations processed status...
+Updated status for 2 locations
+Writing updated Excel file: /Users/codaveto/Documents/repos/clients/elianne/go-potty/portal/portal-excel/go-potty-data-entry-test.xlsx
+Update completed successfully
+
+[2025-03-23T16:52:46.809Z] Step 6: Generating welcome emails...
+[2025-03-23T16:52:46.816Z] Running: node "/Users/codaveto/Documents/repos/clients/elianne/go-potty/portal/portal-excel/scripts/generate-welcome-emails.js" --excelFile=/Users/codaveto/Documents/repos/clients/elianne/go-potty/portal/portal-excel/go-potty-data-entry-test.xlsx --outputFile=/Users/codaveto/Documents/repos/clients/elianne/go-potty/portal/portal-excel/welcome-emails.txt --testMode=true
+[2025-03-23T16:52:48.573Z] Output: Reading Excel file: /Users/codaveto/Documents/repos/clients/elianne/go-potty/portal/portal-excel/go-potty-data-entry-test.xlsx
+Found 2 processed users
+Generated 2 welcome emails, saved to /Users/codaveto/Documents/repos/clients/elianne/go-potty/portal/portal-excel/welcome-emails.txt
+
+[2025-03-23T16:52:48.574Z] ✅ All tests completed successfully!

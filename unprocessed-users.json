@@ -1,0 +1,95 @@
+{
+  "users": [
+    {
+      "index": 0,
+      "email": "avandervelden@kickertje.nl",
+      "organization_id": "aCLqsMmDTDnaObYWmrs3",
+      "auth_created": false,
+      "firestore_created": false
+    },
+    {
+      "index": 1,
+      "email": "umre94@gmail.com",
+      "organization_id": "HDBkVsEX7cuazk28MNoT",
+      "auth_created": false,
+      "firestore_created": false
+    },
+    {
+      "index": 2,
+      "email": "khadijajamil@yahoo.com",
+      "organization_id": "HDBkVsEX7cuazk28MNoT",
+      "auth_created": false,
+      "firestore_created": false
+    },
+    {
+      "index": 3,
+      "email": "alexaa.id98@gmail.com",
+      "organization_id": "HDBkVsEX7cuazk28MNoT",
+      "auth_created": false,
+      "firestore_created": false
+    },
+    {
+      "index": 4,
+      "email": "Abhulimenkome@gmail.com",
+      "organization_id": "HDBkVsEX7cuazk28MNoT",
+      "auth_created": false,
+      "firestore_created": false
+    },
+    {
+      "index": 5,
+      "email": "madhusmita.lipa@gmail.com",
+      "organization_id": "HDBkVsEX7cuazk28MNoT",
+      "auth_created": false,
+      "firestore_created": false
+    },
+    {
+      "index": 6,
+      "email": "maaikjehkn@hotmail.com",
+      "organization_id": "HDBkVsEX7cuazk28MNoT",
+      "auth_created": false,
+      "firestore_created": false
+    },
+    {
+      "index": 7,
+      "email": "amyklink87@gmail.com",
+      "organization_id": "HDBkVsEX7cuazk28MNoT",
+      "auth_created": false,
+      "firestore_created": false
+    },
+    {
+      "index": 8,
+      "email": "milouja@yahoo.com",
+      "organization_id": "HDBkVsEX7cuazk28MNoT",
+      "auth_created": false,
+      "firestore_created": false
+    },
+    {
+      "index": 9,
+      "email": "denice_riedewald@hotmail.com",
+      "organization_id": "HDBkVsEX7cuazk28MNoT",
+      "auth_created": false,
+      "firestore_created": false
+    },
+    {
+      "index": 10,
+      "email": "danielle_van_egmond@hotmail.com",
+      "organization_id": "HDBkVsEX7cuazk28MNoT",
+      "auth_created": false,
+      "firestore_created": false
+    },
+    {
+      "index": 11,
+      "email": "lauramooijekind@gmail.com",
+      "organization_id": "HDBkVsEX7cuazk28MNoT",
+      "auth_created": false,
+      "firestore_created": false
+    },
+    {
+      "index": 12,
+      "email": "wy.wong@hotmail.com",
+      "organization_id": "HDBkVsEX7cuazk28MNoT",
+      "auth_created": false,
+      "firestore_created": false
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "organizations": [
+    {
+      "index": 0,
+      "name": "Gemeente Den Haag",
+      "location_types": "",
+      "address": {
+        "country": "",
+        "county": "",
+        "street": "",
+        "street_number": "",
+        "city": "",
+        "postal_code": ""
+      }
+    }
+  ]
+}
